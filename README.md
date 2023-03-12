@@ -105,6 +105,36 @@ The closer your probability in control group comes to 0.5 the bigger SE you’ll
 When the results of test are uncertain (and you have to run an additional test with better power, but you don’t have time to do it) you have to communicate it to decision makers that they can probably take a risk to launch the feature based on the other data they have. 
 
 
+## 2. Policy and Ethics for Experiments   
+Main Principles:
+- risk - what risk is the participant of the survey being exposed to (the risk should be less than a minimal risk. Experiments that about medical or financial conditions could lead to risks that are above minimal risk level). 
+- benefits - what benefits might be the outcome of the study. Benefits are around improving a product. It is important to be able to state what the benefit would be from completing the study. 
+- alternatives - what other choice do participants have. In online experiments, the issues to consider are what the other alternative services that a user might have, and what the switching costs might be, in terms of time, money, information, etc.
+- data sensitivity - what expectation of privacy and confidentiality do participants have:
+    - Do participants understand what data is being collected about them?
+        - does it include financial or health data
+        - is it personally identifiable
+        - what is security protocol and level of confidentiality
+    - What harm would befall them should that data be made public?
+    - Would they expect that data to be considered private and confidential?
+
+If the study is on existing public data, then there is no expectations of further confidentiality. 
+
+**Identified data** means that data is stored and collected with personally identifiable information (name, phone number, passport number, etc).  
+**Anonymous data** means that data is stored and collected without any personally identifiable information.
+Data can be considered pseudonymous if it is stored with a randomly generated id such as a cookie that gets assigned on some event, such as the first time that a user goes to an app or website and does not have such an id stored.  
+**Anonymised data** is identified or anonymous data that has been looked at and guaranteed in some way that the re-identification risk is low to non-existent, i.e., that given the data, it would be hard to impossible for someone to be able to figure out which individual this data refers to.
+
+When you collect users data:
+- are users being informed?
+- what user identifiers are tied to the data?
+- what type of data is being collected?
+- what is the level of confidentiality and security? who in your company will have an access to this data?
+
+If you teach someone A/B testing you should provide such information to them:
+- which questions to consider when evaluating ethics of your experiments
+- data policy detailing acceptable data uses
+- principles to uphold while running experiments
 
 
 
@@ -112,7 +142,8 @@ When the results of test are uncertain (and you have to run an additional test w
 
 
 
-## 2. Policy and Ethics for Experiments
+
+
 ## 3. Choosing and Characterising Metrics
 ## 4. Designing an Experiment
 ## 5. Analysing Results
