@@ -389,5 +389,81 @@ A python code snippet how to calculate A/B testing groups size: [go to the snipp
 The way to build A/B testing intuition is to gain a lots of practice. 
 
 
-## 5. Analysing Results
+## 5. Analysing Results  
+Plan for the lesson:
+- sanity checks
+- single metric
+- multiple metrics
+- analysis gotchas
 
+Sanity checks are done before starting analysing experiment results to be sure that your experiment was done properly:
+- check size of the control and treatment groups
+- check that invariants (metrics that are not supposed to be changed) are not changed
+
+If one of your sanity checks fail — do not proceed. Go and discover why it actually failed. 
+Have a look at the pre-test period. Do you see the same inconsistency in data? If  yes - something could be wrong with your infrastructure in general, if not - it has something to do with your experiment.   
+The most common mistake here is data capture. Especially if you are checking a new feature. And another reason could be the experiment setup. 
+If it is just a learning effect of your users you won’t see a huge increase in the beginning it will grow steadily over time. 
+
+If your results aren’t significant, but you were expecting they would be. Instead of running for longer to get more users when you don’t like the results, you should be sizing your experiment in advance to ensure that you will have enough power the first time you look at your experiment. See [this post](https://www.evanmiller.org/how-not-to-run-an-ab-test.html) for more details.  
+
+If you write A/B testing software: Don’t report significance levels until an experiment is over, and stop using significance levels to decide whether an experiment should stop or continue. Instead of reporting significance of ongoing experiments, report how large of an effect can be detected given the current sample size.  
+
+If our results are not statistically significant:
+- take a much longer look at your results
+- break it down to different platforms, different days of the week, different stratas of users, etc. 
+- it may help you find bugs in experiment setup
+- as well as it might help you to come up with new hypothesis about how people are reacting to the experiment
+- cross check your results with another methods (e.g. parametric VS non-parametric)
+
+With click-through probability we are dealing with binomial distribution, while when our metric is a click-through rate we more likely to have a poisson distribution (so it’ll be a good idea to estimate the variance empirically).
+
+[Sign calculator](https://www.graphpad.com/quickcalcs/binomial1.cfm)
+How to do a sign test: you look at your metric day by day. Define how many times the test results are better than in control group, for example 8 of 14 days the test was better than control. Then calculate the p-value with the probability of 0.5 (complete random results) and look at it. If it is less than 0.05 then the sign test is statistically significant.  
+Sign test has a lower power than an effect size test which is frequently the case for a non-parametric test, that is a price for not making data distribution assumptions. 
+
+Simpson’s Paradox example: women has higher acceptance rate for each department, but overall an acceptance rate for women is lower than for a man. 
+
+**Multiple comparisons** — the more things you test, the more likely you are to see significant differences just by chance.   
+Example: *"Suppose the treatment is a new way of teaching writing to students, and the control is the standard way of teaching writing. Students in the two groups can be compared in terms of grammar, spelling, organisation, content, and so on. As more attributes are compared, it becomes increasingly likely that the treatment and control groups will appear to differ on at least one attribute due to random sampling error alone."* For comparing simultaneously three metrics at a confidence level of 95% the probability to have at least one false positive is: *1 - 0.95\*\*3 = 0.143* or 14.3%
+
+Bonferroni correction:
+- simple to calculate
+- no assumptions (on independence of metrics)
+- conservative (guarantees to give alpha_overall at least as small as specified)
+
+A more robust method to use for multiple comparison correction is False Discovery Rate (FDR). [Wiki page on FDR](https://en.wikipedia.org/wiki/False_discovery_rate).  
+
+Not to deal with multiple comparisons people might want to use only one metric — OEC (Overall Evaluation Criteria). Best OECs have a good balance between long-term investment metrics and short-term ones. Because you don’t want to loose one in pursuing another. To come up with the best one you have to do a lot of business analysis of your company. For an example our company want to have 25% increase in revenue and 75% increase in site visits. Those will be weights for your compound OEC. 
+
+When you have a statistically significant result of your test you have to decide:
+- do you understand the change 
+- do you have to launch or not to launch
+
+If you have misguided results (some metrics are significant and some are don’t):
+- do you understand the change
+- you have to have an intuition on many other experiments and their results to make a final decision
+
+For small changes to have a change in only one metric can be completely okay. And if for a big change we see a change in only one metric it can be a sign that something somewhere went wrong. 
+
+To launch or not:
+- do I have statistically significant and practically significant results in order to justify the change
+- do I understand what that change has actually done with regards to user experience 
+- is it worth it to launch the change
+
+What will be remembered at the end of the day: did you recommend to launch it or not and was it the right recommendation. 
+
+It’s always a good idea to ramp up any change (to launch it step by step on fractions of users).  
+But keep in mind that an effect can actually flatten out if you gradually ramp up the change. 
+
+Seasonal factors: when students go on a vacation the behaviour of internet changes and then it comes back to normal again.  
+Shopping behaviour changes a lot before holidays and Black Fridays. 
+
+Cohort analysis can help to track how users adopt to a change and how their behaviour changes over time. 
+
+Lessons learned:
+- check, double check and triple check that your experiment was setup properly 
+- you are not only for statistical significance, you are making business decisions
+- don’t forget about business costs to implement the change (backend, support, customer service, opportunity cost, etc.)
+
+THE END
