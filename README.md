@@ -292,9 +292,102 @@ It’s good to start with analytical approach to estimate variability of your da
 User behaviour can change over time, meaning that using metrics being a good idea in the past might not actually be a good metric for the feature. So you should always revise your system of metrics and experiments approach. 
 
 
+## 4. Designing an Experiment   
+Main steps:
+- choose the "subject" of your test — **unit of diversion**
+- choose the "population" — which subjects are eligible (e.g. everyone?, only from a particular region?, only on iOS?, etc. )
+- choose the size of each group — properly size your experiment
+- define the duration of running the experiment
+
+Unit of diversion:
+- user id
+    - stable and unchanging
+    - personally identifiable
+- cookie
+    - changes when you switch a device or a browser
+    - user can clear cookies
+- event
+    - non consistent experience
+    - use only for non-user-visible changes
+- device id (less common):
+    - only available for mobile
+    - tied to a specific device
+    - personally identifiable
+    - doesn’t have cross-platform consistency that a user id can have
+- ip address (less common):
+    - changes when user’s location is changed
+    - not recommended in general
+
+What to keep in mind when choosing how to divert traffic is:
+- user consistency, e.g. when we are using user id, a user has a consistent experience even if they are changing devices as long as they are signed in
+- ethical considerations, e.g. if you are using a user id that means that a user is identifiable and you have to worry about all the issues described in the lesson 2 and also you have to deal with a user consent
+- variability
+
+Empirically computed variability is usually much higher than analytical computed variability. That’s happening when the unit of analysis is different than a unit of diversion. 
+
+**Unit of analysis** — whatever your denominator is. 
+But if your unit of diversion is a cookie or a user id your variability can be higher. 
+
+When you computing variability analytically you are making an assumption not only on the distribution of the data but also you are making an assumption on what is considered to be independent. When you are doing cookies or user ids based diversion that independent based assumption is no longer valid because the groups of events will be correlated together and that actually increases the total variability. 
+
+When *unit of analysis = unit of diversion*, variable tends to be lower and closer to analytical estimate. 
+
+For user visible changes you definitely use a cookie or a user id as a unit of diversion. 
+
+The variability of all data as measured by the pooled standard error usually is lower than for the filtered data. Mostly because there is so much more data when you use all of it, without filtering for only one particular strata. This will often be the case in practice. Also in practice, your data will actually be a mix of different populations almost every time. And when you filter you are going to get a smaller but also more uniform population. Which means that for the same number of data points the variability of the filtered data is likely to be lower. 
+
+When to use cohort instead of a population for your experiments:
+- looking for learning effects
+- examining user retention
+- want to increase user activity
+- anything requiring user to be established 
+But keep in mind that when using cohorts control should be a comparable cohort. And that cohorts limit your experiment to a subset of the population and that can affect variability. 
+
+We’ve already discussed earlier how to size an experiment based on: 
+- your practical significance
+- your statistical significance
+- sensitivity you want. 
+
+All those things can affect the variability of your metric:
+- choice of metric
+- choice of the unit of diversion
+- choice of population 
+
+An example: if our metric is click-through rate and our unit of diversion is cookie, but it turns out we need too many page views. We can apply following strategies to reduce the number of page views needed:
+- increase practical significance boundary, alpha or beta
+- change the unit of diversion to page view
+- target experiment to specific traffic
+- change metric to cookie based click-through-probability
+
+When you know the size of your experiment you have to decide:
+- the duration of the experiment
+- when to run it (is to run it during holidays a good idea or not)
+- what fraction of your traffic you are going to send through the experiment
+
+**Learning effects** — when you want to measure user learning (whether a user is adapting for a change or not).   
+For example:
+- change aversion — when a user don’t like anything new
+- novelty effect — an opposite thing, when something new attracts a user a lot for a short period of time 
+But in both cases over time a user will plateau to a different behaviour. 
+
+To deal with learning effect keep in mind the following:
+- choosing the unit of diversion correctly - you need a stateful unit of diversion like a cookie or a user id
+- you probably want to be using a cohort as opposed to just a population. you choose cohort based on how long users were exposed to a change or how many times they’ve seen it
+- risk and duration - you don’t want to put users through a long exposer, because, maybe you want to test another changes as well (so you, probably it would be better to run your experiment through a longer period of time but on a smaller group of users). 
+- use both pre-periods (A/A tests) and post-periods (another A/A test) of the test to study users behaviour and their learning effects 
+
+The very important thing is to go through your work of designing an experiment properly. 
+
+Keep in mind that variability of your Metric can really change depending on what you choose as your unit of diversion. 
+
+A/B testing is always an iterative process. 
+
+Keep an eye on your data especially during the very first days of you running the experiment to be able to detect immediately whether something went wrong or not. 
+  
+A python code snippet how to calculate A/B testing groups size: [go to the snippet](https://gist.github.com/nktnlx/963e5b194ea1fb895bf362c6dd8a444c). 
+
+The way to build A/B testing intuition is to gain a lots of practice. 
 
 
-
-## 4. Designing an Experiment
 ## 5. Analysing Results
 
